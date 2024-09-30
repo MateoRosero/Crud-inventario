@@ -172,8 +172,8 @@
                         <td>{{ producto.descripcion }}</td>
                         <td>{{ producto.fecha_vencimiento.strftime('%Y-%m-%d') }}</td>
                         <td class="action-buttons">
-                            <a href="{{ url_for('editar_producto', id=producto.id) }}" class="btn-edit">Editar</a>
-                            <a href="{{ url_for('borrar_producto', id=producto.id) }}" class="btn-delete" onclick="return confirm('¿Estás seguro de que quieres borrar este producto?');">Borrar</a>
+                            <a href="{{ url_for('editar_producto', id=producto.id) }}" class="btn-edit" style="background-color: #3498db; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px; font-size: 0.9em;">Editar</a>
+                            <a href="{{ url_for('borrar_producto', id=producto.id) }}" class="btn-delete" style="background-color: #e74c3c; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px; font-size: 0.9em;">Borrar</a>
                         </td>
                     </tr>
                     {% endfor %}
