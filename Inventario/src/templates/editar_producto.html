@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventario</title>
+    <title>Editar Producto</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -125,61 +125,25 @@
 </head>
 <body>
     <div class="container">
-        <h1>Inventario</h1>
+        <h1>Editar Producto</h1>
         
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="flash-message flash-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <h2>Crear Nuevo Producto</h2>
-        <form action="{{ url_for('index') }}" method="POST" class="formulario">
+        <form action="{{ url_for('editar_producto', id=producto.id) }}" method="POST">
             <div class="form-group">
                 <label for="nombre">Nombre</label>
-                <input type="text" id="nombre" name="nombre" required>
+                <input type="text" id="nombre" name="nombre" value="{{ producto.nombre }}" required>
             </div>
             <div class="form-group">
                 <label for="descripcion">Descripción</label>
-                <textarea id="descripcion" name="descripcion" required></textarea>
+                <textarea id="descripcion" name="descripcion" required>{{ producto.descripcion }}</textarea>
             </div>
             <div class="form-group">
                 <label for="fecha_vencimiento">Fecha de vencimiento</label>
-                <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" required>
+                <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" value="{{ producto.fecha_vencimiento.strftime('%Y-%m-%d') }}" required>
             </div>
-            <button type="submit">Guardar Producto</button>
+            <button type="submit">Actualizar Producto</button>
         </form>
         
-        <h2>Productos Guardados</h2>
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th>Fecha de Vencimiento</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for producto in productos %}
-                    <tr>
-                        <td>{{ producto.id }}</td>
-                        <td>{{ producto.nombre }}</td>
-                        <td>{{ producto.descripcion }}</td>
-                        <td>{{ producto.fecha_vencimiento.strftime('%Y-%m-%d') }}</td>
-                        <td class="action-buttons">
-                            <a href="{{ url_for('editar_producto', id=producto.id) }}" class="btn-edit">Editar</a>
-                            <a href="{{ url_for('borrar_producto', id=producto.id) }}" class="btn-delete" onclick="return confirm('¿Estás seguro de que quieres borrar este producto?');">Borrar</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+        <a href="{{ url_for('index') }}">Volver al Inventario</a>
     </div>
 </body>
 </html>
