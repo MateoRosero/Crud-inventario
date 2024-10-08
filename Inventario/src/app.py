@@ -59,8 +59,9 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password, password):
             login_user(user)
+            flash('Has iniciado sesión correctamente', 'success')
             return redirect(url_for('index'))
-        flash('Credenciales inválidas')
+        flash('Credenciales inválidas. Por favor, intenta de nuevo.', 'error')
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -68,18 +69,24 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        
+        # Verificar si el usuario ya existe
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            flash('El nombre de usuario ya está en uso. Por favor, elige otro.', 'error')
+            return render_template('register.html')
+        
+        # Crear nuevo usuario
         hashed_password = generate_password_hash(password)
         new_user = User(username=username, password=hashed_password)
-        try:
-            db.session.add(new_user)
-            db.session.commit()
-            print(f"Usuario {username} registrado exitosamente")  # Log para verificar
-            flash('Usuario registrado exitosamente')
-            return redirect(url_for('login'))
-        except Exception as e:
-            db.session.rollback()
-            print(f"Error al registrar usuario: {str(e)}")  # Log de error
-            flash('Error al registrar usuario')
+        
+        # Agregar usuario a la base de datos
+        db.session.add(new_user)
+        db.session.commit()
+        
+        flash('Te has registrado correctamente. Ahora puedes iniciar sesión.', 'success')
+        return redirect(url_for('login'))
+    
     return render_template('register.html')
 
 @app.route('/logout')
@@ -117,7 +124,7 @@ def eliminar(id):
     
     db.session.delete(producto)
     db.session.commit()
-    print(f"Producto eliminado en MySQL: {producto.nombre}")
+    print(f"Producto eliminado en la base de datos: {producto.nombre}")
     flash('Producto eliminado exitosamente')
     return redirect(url_for('index'))
 
