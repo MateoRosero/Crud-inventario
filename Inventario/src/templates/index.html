@@ -4,182 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventario</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h1, h2 {
-            color: #2c3e50;
-            text-align: center;
-        }
-        .flash-message {
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-            text-align: center;
-        }
-        .flash-success {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-            color: #155724;
-        }
-        .flash-error {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            color: #721c24;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input[type="text"], input[type="date"], textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        textarea {
-            height: 100px;
-        }
-        button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            background-color: #3498db;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
-        tr:hover {
-            background-color: #f5f5f5;
-        }
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        .btn-edit, .btn-delete {
-            padding: 5px 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            text-decoration: none;
-        }
-        .btn-edit {
-            background-color: #ffc107;
-            color: #000;
-        }
-        .btn-delete {
-            background-color: #dc3545;
-            color: #fff;
-        }
-        @media (max-width: 600px) {
-            .container {
-                padding: 10px;
-            }
-            table {
-                font-size: 14px;
-            }
-            th, td {
-                padding: 8px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Inventario</h1>
+        <h1>Bienvenido, {{ current_user.username }}</h1>
+        <a href="{{ url_for('logout') }}">Cerrar sesión</a>
         
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="flash-message flash-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
         <h2>Crear Nuevo Producto</h2>
         <form action="{{ url_for('index') }}" method="POST" class="formulario">
-            <div class="form-group">
-                <label for="nombre">Nombre</label>
-                <input type="text" id="nombre" name="nombre" required>
-            </div>
-            <div class="form-group">
-                <label for="descripcion">Descripción</label>
-                <textarea id="descripcion" name="descripcion" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="fecha_vencimiento">Fecha de vencimiento</label>
-                <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" required>
-            </div>
-            <button type="submit">Guardar Producto</button>
+            <input type="text" name="nombre" placeholder="Nombre del producto" required>
+            <input type="text" name="descripcion" placeholder="Descripción">
+            <input type="date" name="fecha_vencimiento" required>
+            <button type="submit">Agregar Producto</button>
         </form>
         
-        <h2>Productos Guardados</h2>
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th>Fecha de Vencimiento</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for producto in productos %}
-                    <tr>
-                        <td>{{ producto.id }}</td>
-                        <td>{{ producto.nombre }}</td>
-                        <td>{{ producto.descripcion }}</td>
-                        <td>{{ producto.fecha_vencimiento.strftime('%Y-%m-%d') }}</td>
-                        <td class="action-buttons">
-                            <a href="{{ url_for('editar_producto', id=producto.id) }}" class="btn-edit" style="background-color: #3498db; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px; font-size: 0.9em;">Editar</a>
-                            <a href="{{ url_for('borrar_producto', id=producto.id) }}" class="btn-delete" style="background-color: #e74c3c; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px; font-size: 0.9em;">Borrar</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+        <h2>Tus Productos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Fecha de Vencimiento</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                <tr>
+                    <td>{{ producto.nombre }}</td>
+                    <td>{{ producto.descripcion }}</td>
+                    <td>{{ producto.fecha_vencimiento }}</td>
+                    <td>
+                        <a href="{{ url_for('editar', id=producto.id) }}">Editar</a>
+                        <a href="{{ url_for('eliminar', id=producto.id) }}">Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </body>
 </html>
